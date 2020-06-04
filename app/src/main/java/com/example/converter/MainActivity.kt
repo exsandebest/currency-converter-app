@@ -13,12 +13,17 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 
 var currencies: IntArray = intArrayOf(0, 1)
-val currenciesMap: Map<Int, String> = mapOf(0 to "RUB", 1 to "USD")
+val currenciesMap: Map<Int, String> = mapOf(0 to "RUB", 1 to "USD", 2 to "EUR")
 val fixedRates: Map<String, Map<String, Double>> = mapOf(
-    "RUB" to mapOf("USD" to 1/74.0,
-                    "RUB" to 1.0),
+    "RUB" to mapOf("USD" to 1.0/74.0,
+                    "RUB" to 1.0,
+                    "EUR" to 1.0/77.0),
     "USD" to mapOf("RUB" to 74.0,
-                    "USD" to 1.0))
+                    "USD" to 1.0,
+                    "EUR" to 74.0/77.0),
+    "EUR" to mapOf("RUB" to 77.0,
+                    "USD" to 77.0/74.0,
+                    "EUR" to 1.0))
 
 
 class MainActivity : AppCompatActivity() {

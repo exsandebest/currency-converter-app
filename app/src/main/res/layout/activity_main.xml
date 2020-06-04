@@ -23,7 +23,7 @@
 
             <Spinner
                 android:id="@+id/spinner1"
-                android:layout_width="66dp"
+                android:layout_width="132dp"
                 android:layout_height="59dp"
                 android:layout_weight="1"
                 android:entries="@array/currencies" />
@@ -48,7 +48,7 @@
 
             <Spinner
                 android:id="@+id/spinner2"
-                android:layout_width="228dp"
+                android:layout_width="292dp"
                 android:layout_height="57dp"
                 android:layout_weight="1"
                 android:entries="@array/currencies" />
