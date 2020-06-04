@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Currency converter</string>
+    <string name="btnChange_name">CH</string>
+    <string-array name="currencies">
+        <item>₽</item>
+        <item>$</item>
+    </string-array>
+</resources>
