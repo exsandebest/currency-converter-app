@@ -4,7 +4,6 @@ package com.example.converter
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import androidx.appcompat.app.AppCompatActivity
@@ -74,7 +73,6 @@ class MainActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 currencies[0] = spinner1.selectedItemPosition
-                Log.d("MyLog", "cur1 == ${currencies[0]}")
                 update()
             }
         }
@@ -83,7 +81,6 @@ class MainActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 currencies[1] = spinner2.selectedItemPosition
-                Log.d("MyLog", "cur2 == ${currencies[1]}")
                 update()
             }
         }
