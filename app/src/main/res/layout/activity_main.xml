@@ -34,7 +34,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:ems="10"
-                android:inputType="numberDecimal" />
+                android:inputType="numberDecimal"
+                android:textAlignment="center" />
         </LinearLayout>
 
         <Space
