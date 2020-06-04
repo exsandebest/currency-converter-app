@@ -15,5 +15,6 @@
     + ¥ Yuan (CNY)
     + ₴ Hryvnia (UAH)
 * Ability to copy converted value to clipboard by tap
+* Ability to share the conversion result
 * Change button
 * Instant update

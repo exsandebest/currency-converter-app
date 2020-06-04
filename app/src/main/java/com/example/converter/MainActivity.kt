@@ -4,6 +4,7 @@ package com.example.converter
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,7 +16,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 
 var currencies: IntArray = intArrayOf(0, 1)
-val currenciesMap: Map<Int, String> = mapOf(0 to "RUB", 1 to "USD", 2 to "EUR", 3 to "GBP", 4 to "CNY", 5 to "UAH")
+val currenciesCodes: Map<Int, String> = mapOf(0 to "RUB", 1 to "USD", 2 to "EUR", 3 to "GBP", 4 to "CNY", 5 to "UAH")
 val fixedRates: Map<String, Map<String, Double>> = mapOf(
     "RUB" to mapOf("RUB" to 1.0,
                     "USD" to 1.0/74.0,
@@ -61,8 +62,10 @@ class MainActivity : AppCompatActivity() {
         val s = numberEdit1.text.toString()
         if (s == "") {
             textView.setText("")
+            buttonShare.isEnabled = false
         } else {
-            textView.setText((s.toDouble() * fixedRates[currenciesMap[currencies[0]]]!![currenciesMap[currencies[1]]]!!).toString())
+            textView.setText((s.toDouble() * fixedRates[currenciesCodes[currencies[0]]]!![currenciesCodes[currencies[1]]]!!).toString())
+            buttonShare.isEnabled = true
         }
     }
 
@@ -114,6 +117,15 @@ class MainActivity : AppCompatActivity() {
                 Toast.LENGTH_SHORT
             )
             toast.show()
+        }
+
+        buttonShare.setOnClickListener {
+            val text = "${numberEdit1.text} ${currenciesCodes[currencies[0]]} = ${textView.text} ${currenciesCodes[currencies[1]]}"
+            val sendIntent = Intent()
+            sendIntent.action = Intent.ACTION_SEND
+            sendIntent.putExtra(Intent.EXTRA_TEXT, text)
+            sendIntent.type = "text/plain"
+            startActivity(sendIntent)
         }
     }
 }
