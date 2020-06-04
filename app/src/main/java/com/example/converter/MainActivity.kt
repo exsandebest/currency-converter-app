@@ -13,8 +13,13 @@ import android.widget.AdapterView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlin.math.pow
+import kotlin.math.round
 
 
+val precision = 5
+val base = 10.0
+val multiplier = base.pow(precision)
 var currencies: IntArray = intArrayOf(0, 1)
 val currenciesCodes: Map<Int, String> = mapOf(0 to "RUB", 1 to "USD", 2 to "EUR", 3 to "GBP", 4 to "CNY", 5 to "UAH")
 val fixedRates: Map<String, Map<String, Double>> = mapOf(
@@ -64,7 +69,8 @@ class MainActivity : AppCompatActivity() {
             textView.setText("")
             buttonShare.isEnabled = false
         } else {
-            textView.setText((s.toDouble() * fixedRates[currenciesCodes[currencies[0]]]!![currenciesCodes[currencies[1]]]!!).toString())
+            textView.setText((round(s.toDouble() * fixedRates[currenciesCodes[currencies[0]]]!![currenciesCodes[currencies[1]]]!! * multiplier)
+                    / multiplier).toString())
             buttonShare.isEnabled = true
         }
     }
