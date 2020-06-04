@@ -14,5 +14,6 @@
     + £ Pound (GBP)
     + ¥ Yuan (CNY)
     + ₴ Hryvnia (UAH)
+* Ability to copy converted value to clipboard by tap
 * Change button
 * Instant update

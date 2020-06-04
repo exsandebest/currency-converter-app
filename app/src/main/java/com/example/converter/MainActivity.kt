@@ -1,14 +1,17 @@
 package com.example.converter
 
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.AdapterView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
-
 
 
 var currencies: IntArray = intArrayOf(0, 1)
@@ -68,6 +71,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         spinner2.setSelection(currencies[1])
+        val clipboard: ClipboardManager =
+            getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
         spinner1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -93,11 +98,22 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        buttonChange.setOnClickListener { v: View ->
+        buttonChange.setOnClickListener {
             spinner1.setSelection(currencies[1], true)
             spinner2.setSelection(currencies[0], true)
             currencies[0] = currencies[1]
             currencies[1] = spinner2.selectedItemPosition
+        }
+
+        textView.setOnClickListener {
+            val clip = ClipData.newPlainText("Value", textView.text.toString())
+            clipboard.setPrimaryClip(clip)
+            val toast = Toast.makeText(
+                applicationContext,
+                "Copied to clipboard",
+                Toast.LENGTH_SHORT
+            )
+            toast.show()
         }
     }
 }
