@@ -2,8 +2,11 @@
     <string name="app_name">Currency converter</string>
     <string name="btnChange_name">CH</string>
     <string-array name="currencies">
-        <item>RUB (₽)</item>
-        <item>USD ($)</item>
-        <item>EUR (€)</item>
+        <item>(₽)RUB</item>
+        <item>($)USD</item>
+        <item>(€)EUR</item>
+        <item>(£)GBP</item>
+        <item>(¥)CNY</item>
+        <item>(₴)UAH</item>
     </string-array>
 </resources>
