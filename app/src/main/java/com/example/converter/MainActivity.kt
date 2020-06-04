@@ -92,5 +92,12 @@ class MainActivity : AppCompatActivity() {
                 update()
             }
         })
+
+        buttonChange.setOnClickListener { v: View ->
+            spinner1.setSelection(currencies[1], true)
+            spinner2.setSelection(currencies[0], true)
+            currencies[0] = currencies[1]
+            currencies[1] = spinner2.selectedItemPosition
+        }
     }
 }
