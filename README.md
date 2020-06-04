@@ -7,14 +7,14 @@
 <p align="center"><b>Simple mobile (android) application for currency conversion</b></p>
 
 ## Features
-* 6 currencies:
-    + ₽ Ruble (RUB)
-    + $ Dollar (USD)
-    + € Euro (EUR)
-    + £ Pound (GBP)
-    + ¥ Yuan (CNY)
-    + ₴ Hryvnia (UAH)
-* Ability to copy converted value to clipboard by tap
-* Ability to share the conversion result
+* **6** currencies:
+    + ₽ Ruble (*RUB*)
+    + $ Dollar (*USD*)
+    + € Euro (*EUR*)
+    + £ Pound (*GBP*)
+    + ¥ Yuan (*CNY*)
+    + ₴ Hryvnia (*UAH*)
+* Ability to **copy** converted value **to clipboard** by tap
+* Ability to **share** the conversion **result**
 * Change button
-* Instant update
+* **Instant** update
