@@ -17,48 +17,34 @@ import kotlin.math.pow
 import kotlin.math.round
 
 
-val precision = 5
-val base = 10.0
+const val precision = 5
+const val base = 10.0
 val multiplier = base.pow(precision)
-var currencies: IntArray = intArrayOf(0, 1)
+val currencies = arrayOf("RUB", "USD", "EUR", "GBP", "CNY", "UAH")
+var currenciesValues: IntArray = intArrayOf(0, 1)
 val currenciesCodes: Map<Int, String> = mapOf(0 to "RUB", 1 to "USD", 2 to "EUR", 3 to "GBP", 4 to "CNY", 5 to "UAH")
-val fixedRates: Map<String, Map<String, Double>> = mapOf(
-    "RUB" to mapOf("RUB" to 1.0,
-                    "USD" to 1.0/74.0,
-                    "EUR" to 1.0/77.0,
-                    "GBP" to 1.0/86.0,
-                    "CNY" to 1.0/10.0,
-                    "UAH" to 1.0/3.0),
-    "USD" to mapOf("RUB" to 74.0,
-                    "USD" to 1.0,
-                    "EUR" to 74.0/77.0,
-                    "GBP" to 74.0/86.0,
-                    "CNY" to 74.0/10.0,
-                    "UAH" to 74.0/3.0),
-    "EUR" to mapOf("RUB" to 77.0,
-                    "USD" to 77.0/74.0,
-                    "EUR" to 1.0,
-                    "GBP" to 77.0/86.0,
-                    "CNY" to 77.0/10.0,
-                    "UAH" to 77.0/3.0),
-    "GBP" to mapOf("RUB" to 86.0,
-                    "USD" to 86.0/74.0,
-                    "EUR" to 86.0/77.0,
-                    "GBP" to 1.0,
-                    "CNY" to 86.0/10.0,
-                    "UAH" to 86.0/3.0),
-    "CNY" to mapOf("RUB" to 10.0,
-                    "USD" to 10.0/74.0,
-                    "EUR" to 10.0/77.0,
-                    "GBP" to 10.0/86.0,
-                    "CNY" to 1.0,
-                    "UAH" to 10.0/3.0),
-    "UAH" to mapOf("RUB" to 3.0,
-                    "USD" to 3.0/74.0,
-                    "EUR" to 3.0/77.0,
-                    "GBP" to 3.0/86.0,
-                    "CNY" to 3.0/10.0,
-                    "UAH" to 1.0))
+val fixedRates = mutableMapOf(
+    "RUB" to mutableMapOf("RUB" to 1.0,
+        "USD" to 1.0/69.0,
+        "EUR" to 1.0/78.0,
+        "GBP" to 1.0/87.0,
+        "CNY" to 1.0/10.0,
+        "UAH" to 1.0/3.0))
+
+
+fun initialize() {
+    val rubMap = fixedRates.getValue("RUB")
+    for (cur in currencies) {
+        if (cur == "RUB") continue
+        val curRate = 1.0 / rubMap.getValue(cur)
+        var curMap = mutableMapOf("RUB" to curRate)
+        for (c in currencies) {
+            if (c == "RUB") continue
+            curMap.put(c, curRate * rubMap.getValue(c))
+        }
+        fixedRates.put(cur, curMap)
+    }
+}
 
 
 class MainActivity : AppCompatActivity() {
@@ -69,7 +55,7 @@ class MainActivity : AppCompatActivity() {
             textView.setText("")
             buttonShare.isEnabled = false
         } else {
-            textView.setText((round(s.toDouble() * fixedRates[currenciesCodes[currencies[0]]]!![currenciesCodes[currencies[1]]]!! * multiplier)
+            textView.setText((round(s.toDouble() * fixedRates[currenciesCodes[currenciesValues[0]]]!![currenciesCodes[currenciesValues[1]]]!! * multiplier)
                     / multiplier).toString())
             buttonShare.isEnabled = true
         }
@@ -79,14 +65,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        spinner2.setSelection(currencies[1])
+        spinner2.setSelection(currenciesValues[1])
+
+        initialize()
+
         val clipboard: ClipboardManager =
             getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
         spinner1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                currencies[0] = spinner1.selectedItemPosition
+                currenciesValues[0] = spinner1.selectedItemPosition
                 update()
             }
         }
@@ -94,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         spinner2.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                currencies[1] = spinner2.selectedItemPosition
+                currenciesValues[1] = spinner2.selectedItemPosition
                 update()
             }
         }
@@ -108,10 +97,10 @@ class MainActivity : AppCompatActivity() {
         })
 
         buttonChange.setOnClickListener {
-            spinner1.setSelection(currencies[1], true)
-            spinner2.setSelection(currencies[0], true)
-            currencies[0] = currencies[1]
-            currencies[1] = spinner2.selectedItemPosition
+            spinner1.setSelection(currenciesValues[1], true)
+            spinner2.setSelection(currenciesValues[0], true)
+            currenciesValues[0] = currenciesValues[1]
+            currenciesValues[1] = spinner2.selectedItemPosition
         }
 
         textView.setOnClickListener {
@@ -126,7 +115,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonShare.setOnClickListener {
-            val text = "${numberEdit1.text} ${currenciesCodes[currencies[0]]} = ${textView.text} ${currenciesCodes[currencies[1]]}"
+            val text = "${numberEdit1.text} ${currenciesCodes[currenciesValues[0]]} = ${textView.text} ${currenciesCodes[currenciesValues[1]]}"
             val sendIntent = Intent()
             sendIntent.action = Intent.ACTION_SEND
             sendIntent.putExtra(Intent.EXTRA_TEXT, text)
