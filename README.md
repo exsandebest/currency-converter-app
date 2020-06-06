@@ -19,3 +19,6 @@
 * Ability to **share** the conversion **result**
 * Change button
 * **Instant** conversion
+
+## Example - screenshot
+<img width="300" src="https://raw.githubusercontent.com/exsandebest/currency-converter-app/master/examples/screenshots/main.jpg">
