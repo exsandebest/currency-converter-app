@@ -13,8 +13,9 @@
     + € Euro (*EUR*)
     + £ Pound (*GBP*)
     + ¥ Yuan (*CNY*)
-    + ₴ Hryvnia (*UAH*)
+    + ₺ Turkish lira (*TRY*)
+* **Updating rates** when launching the app (using [exchangeratesapi.io](https://exchangeratesapi.io))
 * Ability to **copy** converted value **to clipboard** by tap
 * Ability to **share** the conversion **result**
 * Change button
-* **Instant** update
+* **Instant** conversion
