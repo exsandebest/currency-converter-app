@@ -30,7 +30,6 @@ const val baseCurrency = "RUB"
 val multiplier = base.pow(precision)
 val currencies = arrayOf("RUB", "USD", "EUR", "GBP", "CNY", "TRY")
 var currenciesValues = intArrayOf(0, 1)
-val currenciesCodes = mapOf(0 to "RUB", 1 to "USD", 2 to "EUR", 3 to "GBP", 4 to "CNY", 5 to "TRY")
 val rates = mutableMapOf(
     baseCurrency to mutableMapOf(
         baseCurrency to 1.0,
@@ -46,11 +45,11 @@ class MainActivity : AppCompatActivity() {
 
     fun updateValue() {
         val s = numberEdit1.text.toString()
-        if (s == "") {
+        if (s == "" || s == ".") {
             textView.text = ""
             buttonShare.isEnabled = false
         } else {
-            textView.text = (round(s.toDouble() * rates[currenciesCodes[currenciesValues[0]]]!![currenciesCodes[currenciesValues[1]]]!! * multiplier)
+            textView.text = (round(s.toDouble() * rates[currencies[currenciesValues[0]]]!![currencies[currenciesValues[1]]]!! * multiplier)
                     / multiplier).toString()
             buttonShare.isEnabled = true
         }
@@ -160,7 +159,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonShare.setOnClickListener {
-            val text = "${numberEdit1.text} ${currenciesCodes[currenciesValues[0]]} = ${textView.text} ${currenciesCodes[currenciesValues[1]]}"
+            val text = "${numberEdit1.text} ${currencies[currenciesValues[0]]} = ${textView.text} ${currencies[currenciesValues[1]]}"
             val sendIntent = Intent()
             sendIntent.action = Intent.ACTION_SEND
             sendIntent.putExtra(Intent.EXTRA_TEXT, text)
