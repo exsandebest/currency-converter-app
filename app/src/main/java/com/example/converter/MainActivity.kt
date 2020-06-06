@@ -20,16 +20,18 @@ import kotlin.math.round
 const val precision = 5
 const val base = 10.0
 val multiplier = base.pow(precision)
-val currencies = arrayOf("RUB", "USD", "EUR", "GBP", "CNY", "UAH")
-var currenciesValues: IntArray = intArrayOf(0, 1)
-val currenciesCodes: Map<Int, String> = mapOf(0 to "RUB", 1 to "USD", 2 to "EUR", 3 to "GBP", 4 to "CNY", 5 to "UAH")
+val currencies = arrayOf("RUB", "USD", "EUR", "GBP", "CNY", "TRY")
+var currenciesValues = intArrayOf(0, 1)
+val currenciesCodes = mapOf(0 to "RUB", 1 to "USD", 2 to "EUR", 3 to "GBP", 4 to "CNY", 5 to "TRY")
 val fixedRates = mutableMapOf(
-    "RUB" to mutableMapOf("RUB" to 1.0,
+    "RUB" to mutableMapOf(
+        "RUB" to 1.0,
         "USD" to 1.0/69.0,
         "EUR" to 1.0/78.0,
         "GBP" to 1.0/87.0,
         "CNY" to 1.0/10.0,
-        "UAH" to 1.0/3.0))
+        "TRY" to 1.0/11.0))
+
 
 
 fun initialize() {
@@ -104,6 +106,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         textView.setOnClickListener {
+            if (textView.text == "") return@setOnClickListener
             val clip = ClipData.newPlainText("Value", textView.text.toString())
             clipboard.setPrimaryClip(clip)
             val toast = Toast.makeText(
