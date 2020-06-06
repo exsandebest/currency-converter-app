@@ -9,4 +9,8 @@
         <item>(¥)CNY</item>
         <item>(₺)TRY</item>
     </string-array>
+    <string name="label_actual_rates">Rates as of %1$S</string>
+    <string name="label_fixed_rates">Fixed base rates</string>
+    <string name="copied_to_clipboard">Copied to clipboard</string>
+    <string name="failed_to_update_rates">Failed to update rates\nUsing fixed rates</string>
 </resources>

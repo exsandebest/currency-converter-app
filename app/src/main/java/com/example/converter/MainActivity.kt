@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onResponse(call: Call, response: Response) {
                     val body = response.body?.string()
                     if (body == null) {
-                        showToast("Failed to update rates\nUsing fixed rates", 1)
+                        showToast(getString(R.string.failed_to_update_rates), 1)
                         return
                     }
                     val responseObject = JSONObject(body)
@@ -83,14 +83,23 @@ class MainActivity : AppCompatActivity() {
                         rates[baseCurrency]!![cur] = responseRates.getDouble(cur)
                     }
                     unpackRates()
+                    runOnUiThread {
+                        tvRatesDate.text = getString(R.string.label_actual_rates, responseObject.getString("date"))
+                    }
                 }
 
                 override fun onFailure(call: Call, e: IOException) {
-                    showToast("Failed to update rates\nUsing fixed rates", 1)
+                    showToast(getString(R.string.failed_to_update_rates), 1)
+                    runOnUiThread {
+                        tvRatesDate.text = getString(R.string.label_fixed_rates)
+                    }
                 }
             })
         } catch (e: UnknownHostException) {
-            showToast("Failed to update rates\nUsing fixed rates", 1)
+            showToast(getString(R.string.failed_to_update_rates), 1)
+            runOnUiThread {
+                tvRatesDate.text = getString(R.string.label_fixed_rates)
+            }
         }
     }
 
@@ -113,7 +122,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         spinner2.setSelection(currenciesValues[1])
-
+        tvRatesDate.text = getString(R.string.label_fixed_rates)
         unpackRates()
         updateRates()
 
@@ -153,9 +162,9 @@ class MainActivity : AppCompatActivity() {
 
         textView.setOnClickListener {
             if (textView.text == "") return@setOnClickListener
-            val clip = ClipData.newPlainText("Value", textView.text.toString())
+            val clip = ClipData.newPlainText(null, textView.text.toString())
             clipboard.setPrimaryClip(clip)
-            showToast("Copied to clipboard")
+            showToast(getString(R.string.copied_to_clipboard))
         }
 
         buttonShare.setOnClickListener {
