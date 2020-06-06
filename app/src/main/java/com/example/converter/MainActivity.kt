@@ -13,19 +13,27 @@ import android.widget.AdapterView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import okhttp3.*
+import org.json.JSONObject
+import java.io.IOException
+import java.net.UnknownHostException
 import kotlin.math.pow
 import kotlin.math.round
 
 
-const val precision = 5
+
+var client = OkHttpClient()
+const val baseUrl = "https://api.exchangeratesapi.io/latest"
+const val precision = 6
 const val base = 10.0
+const val baseCurrency = "RUB"
 val multiplier = base.pow(precision)
 val currencies = arrayOf("RUB", "USD", "EUR", "GBP", "CNY", "TRY")
 var currenciesValues = intArrayOf(0, 1)
 val currenciesCodes = mapOf(0 to "RUB", 1 to "USD", 2 to "EUR", 3 to "GBP", 4 to "CNY", 5 to "TRY")
-val fixedRates = mutableMapOf(
-    "RUB" to mutableMapOf(
-        "RUB" to 1.0,
+val rates = mutableMapOf(
+    baseCurrency to mutableMapOf(
+        baseCurrency to 1.0,
         "USD" to 1.0/69.0,
         "EUR" to 1.0/78.0,
         "GBP" to 1.0/87.0,
@@ -34,32 +42,70 @@ val fixedRates = mutableMapOf(
 
 
 
-fun initialize() {
-    val rubMap = fixedRates.getValue("RUB")
-    for (cur in currencies) {
-        if (cur == "RUB") continue
-        val curRate = 1.0 / rubMap.getValue(cur)
-        var curMap = mutableMapOf("RUB" to curRate)
-        for (c in currencies) {
-            if (c == "RUB") continue
-            curMap.put(c, curRate * rubMap.getValue(c))
-        }
-        fixedRates.put(cur, curMap)
-    }
-}
-
-
 class MainActivity : AppCompatActivity() {
 
-    fun update() {
+    fun updateValue() {
         val s = numberEdit1.text.toString()
         if (s == "") {
-            textView.setText("")
+            textView.text = ""
             buttonShare.isEnabled = false
         } else {
-            textView.setText((round(s.toDouble() * fixedRates[currenciesCodes[currenciesValues[0]]]!![currenciesCodes[currenciesValues[1]]]!! * multiplier)
-                    / multiplier).toString())
+            textView.text = (round(s.toDouble() * rates[currenciesCodes[currenciesValues[0]]]!![currenciesCodes[currenciesValues[1]]]!! * multiplier)
+                    / multiplier).toString()
             buttonShare.isEnabled = true
+        }
+    }
+
+    fun showToast(text: String, length: Int = 0) {
+        runOnUiThread {
+            val toast = Toast.makeText(
+                applicationContext,
+                text,
+                if (length == 0) Toast.LENGTH_SHORT else Toast.LENGTH_LONG
+            )
+            toast.show()
+        }
+    }
+
+    private fun updateRates() {
+        val url = "${baseUrl}?base=${baseCurrency}&symbols=${currencies.joinToString(",")}"
+        try {
+            val request = Request.Builder().url(url).build()
+            client.newCall(request).enqueue(object : Callback {
+                override fun onResponse(call: Call, response: Response) {
+                    val body = response.body?.string()
+                    if (body == null) {
+                        showToast("Failed to update rates\nUsing fixed rates", 1)
+                        return
+                    }
+                    val responseObject = JSONObject(body)
+                    val responseRates = responseObject.getJSONObject("rates")
+                    for (cur in currencies) {
+                        rates[baseCurrency]!![cur] = responseRates.getDouble(cur)
+                    }
+                    unpackRates()
+                }
+
+                override fun onFailure(call: Call, e: IOException) {
+                    showToast("Failed to update rates\nUsing fixed rates", 1)
+                }
+            })
+        } catch (e: UnknownHostException) {
+            showToast("Failed to update rates\nUsing fixed rates", 1)
+        }
+    }
+
+    fun unpackRates(){
+        val rubMap = rates.getValue(baseCurrency)
+        for (cur in currencies) {
+            if (cur == baseCurrency) continue
+            val curRate = 1.0 / rubMap.getValue(cur)
+            val curMap = mutableMapOf(baseCurrency to curRate)
+            for (c in currencies) {
+                if (c == baseCurrency) continue
+                curMap[c] = curRate * rubMap.getValue(c)
+            }
+            rates[cur] = curMap
         }
     }
 
@@ -69,7 +115,8 @@ class MainActivity : AppCompatActivity() {
 
         spinner2.setSelection(currenciesValues[1])
 
-        initialize()
+        unpackRates()
+        updateRates()
 
         val clipboard: ClipboardManager =
             getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -78,7 +125,7 @@ class MainActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 currenciesValues[0] = spinner1.selectedItemPosition
-                update()
+                updateValue()
             }
         }
 
@@ -86,7 +133,7 @@ class MainActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 currenciesValues[1] = spinner2.selectedItemPosition
-                update()
+                updateValue()
             }
         }
 
@@ -94,7 +141,7 @@ class MainActivity : AppCompatActivity() {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
             override fun afterTextChanged(editable: Editable) {
-                update()
+                updateValue()
             }
         })
 
@@ -109,12 +156,7 @@ class MainActivity : AppCompatActivity() {
             if (textView.text == "") return@setOnClickListener
             val clip = ClipData.newPlainText("Value", textView.text.toString())
             clipboard.setPrimaryClip(clip)
-            val toast = Toast.makeText(
-                applicationContext,
-                "Copied to clipboard",
-                Toast.LENGTH_SHORT
-            )
-            toast.show()
+            showToast("Copied to clipboard")
         }
 
         buttonShare.setOnClickListener {
